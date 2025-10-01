@@ -42,11 +42,11 @@ BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data
 INCLUDES	:=	include
-#ROMFS	:=	romfs
+ROMFS	    :=	romfs
 
 APP_TITLE	:= NXEgg
 APP_AUTHOR	:= MadSkyer
-APP_VERSION := 0.1.0
+APP_VERSION := 0.2.0
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -63,7 +63,8 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lnx
+LIBS    := -lcurl -lzzip -lz -lmbedx509 -lmbedtls -lmbedcrypto
+LIBS	+= -lnx
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing

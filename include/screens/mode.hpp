@@ -35,4 +35,9 @@ struct ModeScreen : FsmScreen
         context->DrawStatus();
         transit<MenuScreen>();
     };
+
+    void react(EvInputBack const &) override {
+        consoleClear();
+        transit<MenuScreen>();
+    }
 };

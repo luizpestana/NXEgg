@@ -121,9 +121,17 @@ namespace tinyfsm
       enter();
     }
 
+    template<typename S>
+    static void start() {
+      current_state_ptr = &_state_instance<S>::value;
+      current_state_ptr->entry();
+    }
+
     template<typename E>
     static void dispatch(E const & event) {
-      current_state_ptr->react(event);
+      if (current_state_ptr != nullptr) {
+        current_state_ptr->react(event);
+      }
     }
 
 
