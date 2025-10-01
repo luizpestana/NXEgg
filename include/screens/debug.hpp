@@ -32,4 +32,9 @@ struct DebugScreen : FsmScreen
     void react(EvInputAction const &) override {
         search();
     };
+
+    void react(EvInputBack const &) override {
+        consoleClear();
+        transit<MenuScreen>();
+    }
 };

@@ -6,6 +6,8 @@
 
 struct MenuScreen;
 
+struct UpdateScreen;
+
 struct FsmScreen : tinyfsm::Fsm<FsmScreen> {
     virtual void entry(void) { };
     void exit(void) { };
@@ -18,10 +20,7 @@ struct FsmScreen : tinyfsm::Fsm<FsmScreen> {
     virtual void react(EvInputRight const &) { };
     virtual void react(EvInputAction const &) { };
     virtual void react(EvInputOption const &) { };
-    virtual void react(EvInputBack const &) {
-        consoleClear();
-        transit<MenuScreen>();
-    };
+    virtual void react(EvInputBack const &) { };
     static void start() {
         if (context->debugger->AttachToProcess()) {
             context->gui->InitGridLayout();
@@ -31,7 +30,7 @@ struct FsmScreen : tinyfsm::Fsm<FsmScreen> {
             Fsm::start();
         } else {
             context->gui->InitSimpleLayout();
-            printf("No game is running!");
+            Fsm::start<UpdateScreen>();
         }
     }
     static bool run() {
@@ -55,5 +54,6 @@ protected:
 #include "screens/region.hpp"
 #include "screens/type.hpp"
 #include "screens/menu.hpp"
+#include "screens/update.hpp"
 
 FSM_INITIAL_STATE(FsmScreen, MenuScreen)

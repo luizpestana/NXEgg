@@ -139,4 +139,9 @@ struct DebugModifyScreen : FsmScreen
             }
         }
     };
+
+    void react(EvInputBack const &) override {
+        consoleClear();
+        transit<MenuScreen>();
+    }
 };

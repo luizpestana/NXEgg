@@ -43,4 +43,9 @@ struct DebugSelectScreen : FsmScreen
         }
         transit<DebugScreen>();
     };
+
+    void react(EvInputBack const &) override {
+        consoleClear();
+        transit<MenuScreen>();
+    }
 };
