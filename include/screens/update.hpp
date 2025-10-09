@@ -148,29 +148,6 @@ static bool move(const std::string& from, const std::string& to) {
     return rename(from.c_str(), to.c_str()) == 0;
 }
 
-static bool move_all_files(const std::string& srcDir, const std::string& dstDir) {
-    DIR* d = opendir(srcDir.c_str());
-    if (!d) {
-        return false;
-    }
-    struct dirent* e;
-    while ((e = readdir(d))) {
-        std::string name = e->d_name;
-        if (name == "." || name == "..") {
-            continue;
-        }
-        std::string src = srcDir + "/" + name;
-        std::string dst = dstDir + "/" + name;
-
-        if (e->d_type == DT_REG && ((file_exists(dst) && remove(dst.c_str()) != 0) || !move(src, dst))) {
-            closedir(d);
-            return false;
-        }
-    }
-    closedir(d);
-    return true;
-}
-
 static bool move_new_dirs(const std::string& srcDir, const std::string& dstDir) {
     DIR* d = opendir(srcDir.c_str());
     if (!d) {
@@ -511,7 +488,7 @@ struct UpdateScreen : FsmScreen
         printf("No game is running!");
         if (nxu::net_connected()) {
             printf("\n\n");
-            printf("Press A to update Atmosphere.");
+            printf("Press A to create Atmosphere update.");
             update = 0;
         } else {
             update = -1;
@@ -522,7 +499,7 @@ struct UpdateScreen : FsmScreen
         if (update == 0) {
             update++;
             printf("\n\n");
-            printf("Are you sure you want to update?");
+            printf("Are you sure you want to download the updates?");
             return;
         }
 
@@ -531,6 +508,20 @@ struct UpdateScreen : FsmScreen
             printf("\n\n");
             printf("Restarting...");
             consoleUpdate(NULL);
+
+            const std::string reboot_payload = "sdmc:/atmosphere/reboot_payload.bin";
+
+            if (nxu::file_exists(reboot_payload) && remove(reboot_payload.c_str()) != 0) {
+                printf("\n\n");
+                printf("Failed to remove reboot_payload file!");
+                return;
+            }
+
+            if (!nxu::move("sdmc:/tmp/TegraExplorer.bin", reboot_payload)) {
+                printf("\n\n");
+                printf("Failed to move TegraExplorer file!");
+                return;
+            }
 
             bpcInitialize();
             bpcRebootSystem();
@@ -543,7 +534,7 @@ struct UpdateScreen : FsmScreen
         }
 
         printf("\n\n");
-        printf("Updating");
+        printf("Processing");
         consoleUpdate(NULL);
 
         socketInitializeDefault();
@@ -578,7 +569,8 @@ struct UpdateScreen : FsmScreen
             {"https://api.github.com/repos/ndeadly/MissionControl/releases/latest"},
             {"https://api.github.com/repos/impeeza/sys-patch/releases/latest"},
             {"https://api.github.com/repos/exelix11/SysDVR/releases/latest", {"SysDVR.zip"}},
-            {"https://api.github.com/repos/exelix11/dvr-patches/releases/latest", {"dvr-patches.zip"}}
+            {"https://api.github.com/repos/exelix11/dvr-patches/releases/latest", {"dvr-patches.zip"}},
+            {"https://api.github.com/repos/suchmememanyskill/TegraExplorer/latest", {"TegraExplorer.bin"}}
         };
 
         for (auto& repo : repos) {
@@ -601,14 +593,6 @@ struct UpdateScreen : FsmScreen
         printf(".");
         consoleUpdate(NULL);
 
-        if (!nxu::move_all_files(tmp, "sdmc:/") || !nxu::move_all_files(tmp + "/switch", "sdmc:/switch")) {
-            printf("\n\n");
-            printf("Failed to move the files!");
-            return;
-        }
-        printf(".");
-        consoleUpdate(NULL);
-
         if (!nxu::copytree_shallow("romfs:/patches", tmp)) {
             printf("\n\n");
             printf("Failed to copy the patches!");
@@ -617,36 +601,13 @@ struct UpdateScreen : FsmScreen
         printf(".");
         consoleUpdate(NULL);
 
-        if (!nxu::move("sdmc:/atmosphere", tmp + "/atmosphere_bkp")) {
-            printf("\n\n");
-            printf("Failed to backup Atmosphere!");
-            return;
-        }
-        printf(".");
-        consoleUpdate(NULL);
-
-        if (!nxu::move(tmp + "/atmosphere", "sdmc:/atmosphere")) {
-            printf("\n\n");
-            printf("Failed to move the Atmosphere!");
-            return;
-        }
-        printf(".");
-        consoleUpdate(NULL);
-
-        if (!nxu::move_new_dirs(tmp + "/atmosphere_bkp/contents", "sdmc:/atmosphere/contents")) {
+        if (!nxu::move_new_dirs("sdmc:/atmosphere/contents", tmp + "/atmosphere/contents")) {
             printf("\n\n");
             printf("Failed to move the Atmosphere contents!");
             return;
         }
         printf(".");
         consoleUpdate(NULL);
-
-        if (!nxu::remove_tree(tmp)) {
-            printf("\n\n");
-            printf("Failed to remove the temporary folder!");
-            return;
-        }
-        printf(".");
 
         printf("\n\n");
         printf("Done!");
@@ -660,23 +621,13 @@ struct UpdateScreen : FsmScreen
         if (update == 2) {
             update++;
 
-            const std::string tmp = "sdmc:/tmp";
-
-            if (nxu::dir_exists(tmp) && !nxu::remove_tree(tmp)) {
-                printf("\n\n");
-                printf("Failed to remove the existing temporary folder!");
-                return;
-            }
-            printf(".");
-            consoleUpdate(NULL);
+            const std::string tmp = "sdmc:/tmp/firmware";
 
             if (!nxu::mkdirs(tmp)) {
                 printf("\n\n");
-                printf("Failed to create the temporary folder!");
+                printf("Failed to create the firmware folder!");
                 return;
             }
-            printf(".");
-            consoleUpdate(NULL);
 
             printf("\n\n");
             printf("Downloading firmware...");
