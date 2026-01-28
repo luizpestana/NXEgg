@@ -43,7 +43,6 @@ struct FsmScreen : tinyfsm::Fsm<FsmScreen> {
     static void stop() {
         delete context;
     }
-protected:
     static AppContext *context;
 };
 

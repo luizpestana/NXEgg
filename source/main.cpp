@@ -1,9 +1,11 @@
 #include "fsm_screen.hpp"
 
-AppContext *FsmScreen::context = new AppContext();
+AppContext *FsmScreen::context = nullptr;
 
 int main(int argc, char* argv[])
 {
+    FsmScreen::context = new AppContext();
+
     padConfigureInput(1, HidNpadStyleSet_NpadStandard);
 
     PadState pad;

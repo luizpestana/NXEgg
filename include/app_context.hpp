@@ -37,8 +37,8 @@ public:
 
     void DrawStatus();
 
-    Gui *gui = new Gui("NXEgg App Debugger");
-    Debugger *debugger = new Debugger();
+    Gui *gui = nullptr;
+    Debugger *debugger = nullptr;
     MemoryDump *memoryDump = nullptr;
 
     std::vector<std::string> searchTypes {

@@ -6,6 +6,9 @@
 
 AppContext::AppContext() {
     appletSetMediaPlaybackState(true);
+
+    gui = new Gui("NXEgg App Debugger");
+    debugger = new Debugger();
 }
 
 AppContext::~AppContext() {

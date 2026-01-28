@@ -13,6 +13,7 @@ Gui::Gui(std::string title) {
 Gui::~Gui() {
     for (PrintConsole *console: consoles) {
         consoleExit(console);
+        delete console;
     }
 }
 
@@ -26,7 +27,7 @@ void Gui::InitSimpleLayout() {
     PrintConsole *console = consoles[0];
 
     DrawWindow(console, 0, 0, console->consoleWidth, console->consoleHeight, title);
-    consoleSetWindow(console, 2, 2, console->consoleWidth - 4, console->consoleHeight - 4);
+    consoleSetWindow(console, 3, 3, console->consoleWidth - 4, console->consoleHeight - 4);
     consoleUpdate(console);
 }
 
@@ -40,21 +41,21 @@ void Gui::InitGridLayout() {
     // LEFT
     console = new PrintConsole();
     consoleInit(console);
-    consoleSetWindow(console, 2, 8, middleSeparator - 3, screenHeight - 19);
+    consoleSetWindow(console, 3, 9, middleSeparator - 3, screenHeight - 19);
     consoleUpdate(console);
     consoles.push_back(console);
 
     // RIGHT
     console = new PrintConsole();
     consoleInit(console);
-    consoleSetWindow(console, middleSeparator + 2, 8, screenWidth - middleSeparator - 4, screenHeight - 12);
+    consoleSetWindow(console, middleSeparator + 3, 9, screenWidth - middleSeparator - 4, screenHeight - 12);
     consoleUpdate(console);
     consoles.push_back(console);
 
     // BOTTOM
     console = new PrintConsole();
     consoleInit(console);
-    consoleSetWindow(console, 1, screenHeight - 2, screenWidth - 2, 1);
+    consoleSetWindow(console, 2, screenHeight - 1, screenWidth - 2, 1);
     consoleUpdate(console);
     consoles.push_back(console);
 
@@ -65,16 +66,16 @@ void Gui::InitGridLayout() {
     DrawYSeparator(console, 0, screenHeight - 3, screenWidth);
     DrawXSeparator(console, middleSeparator, 6, screenHeight - 8);
     DrawYSeparator(console, 0, screenHeight - 10, middleSeparator + 1);
-    console->cursorX = 2;
-    console->cursorY = screenHeight - 8;
+    console->cursorX = 3;
+    console->cursorY = screenHeight - 7;
     printf("(A) Select\n");
-    console->cursorX = 2;
+    console->cursorX = 3;
     printf("(B) Return\n");
-    console->cursorX = 2;
+    console->cursorX = 3;
     printf("(Y) Freeze / Unfreeze\n");
-    console->cursorX = 2;
+    console->cursorX = 3;
     printf("(+) Exit");
-    consoleSetWindow(console, 2, 2, screenWidth - 4, 3);
+    consoleSetWindow(console, 3, 3, screenWidth - 4, 3);
     consoleUpdate(console);
 }
 
@@ -114,8 +115,8 @@ void Gui::DrawWindow(PrintConsole *console, int x, int y, int width, int height,
     consoleClear();
 
     // Top Line
-    console->cursorX = 0;
-    console->cursorY = 0;
+    console->cursorX = 1;
+    console->cursorY = 1;
     printf("%c", 218);
     for (int i = 0; i < width - 2; i++) {
         printf("%c", 196);
@@ -123,17 +124,17 @@ void Gui::DrawWindow(PrintConsole *console, int x, int y, int width, int height,
     printf("%c", 191);
 
     // Middle Vertical Lines
-    console->cursorY = 1;
+    console->cursorY = 2;
     for (int i = 0; i < height - 2; i++) {
-        console->cursorX = 0;
+        console->cursorX = 1;
         printf("%c", 179);
-        console->cursorX = width - 1;
+        console->cursorX = width;
         printf("%c", 179);
         console->cursorY++;
     }
 
     // Bottom Line
-    console->cursorX = 0;
+    console->cursorX = 1;
     printf("%c", 192);
     for (int i = 0; i < width - 2; i++) {
         printf("%c", 196);
@@ -142,8 +143,8 @@ void Gui::DrawWindow(PrintConsole *console, int x, int y, int width, int height,
 
     // Title
     if (!title.empty()) {
-        console->cursorX = 2;
-        console->cursorY = 0;
+        console->cursorX = 3;
+        console->cursorY = 1;
         printf("%s", title.c_str());
     }
 }
@@ -156,16 +157,16 @@ void Gui::DrawXSeparator(PrintConsole *console, int x, int y, int height) {
     consoleSelect(console);
 
     // Line
-    console->cursorX = x;
-    console->cursorY = y;
+    console->cursorX = x + 1;
+    console->cursorY = y + 1;
     printf("%c", 194);
-    for (int i = 1; i < height - 1; i++) {
-        console->cursorX = x;
+    for (int i = 2; i < height; i++) {
+        console->cursorX = x + 1;
         console->cursorY = y + i;
         printf("%c", 179);
     }
-    console->cursorX = x;
-    console->cursorY = y + height - 1;
+    console->cursorX = x + 1;
+    console->cursorY = y + height;
     printf("%c", 193);
 }
 
@@ -173,8 +174,8 @@ void Gui::DrawYSeparator(PrintConsole *console, int x, int y, int width) {
     consoleSelect(console);
 
     // Line
-    console->cursorX = x;
-    console->cursorY = y;
+    console->cursorX = x + 1;
+    console->cursorY = y + 1;
     printf("%c", 195);
     for (int i = 0; i < width - 2; i++) {
         printf("%c", 196);
@@ -185,6 +186,8 @@ void Gui::DrawYSeparator(PrintConsole *console, int x, int y, int width) {
 void Gui::DrawMenu(PrintConsole *console, std::vector<std::string> options, int selectedIndex, bool enabled) {
     consoleSelect(console);
     consoleClear();
+    console->cursorX = 1;
+    console->cursorY = 1;
     DrawMenuInline(console, options, selectedIndex, enabled);
 }
 
@@ -204,14 +207,10 @@ void Gui::DrawMenuInline(PrintConsole *console, std::vector<std::string> options
             }
         }
         printf("%s", option.c_str());
-        if (i == selectedIndex) {
-            for (int c = 0; c < width - (int) option.length(); c++) {
-                printf(" ");
-            }
-            console->bg = 0;
-        } else {
-            printf("\n");
+        for (int c = 0; c < width - (int) option.length(); c++) {
+            printf(" ");
         }
+        console->bg = 0;
         i++;
     }
 }
