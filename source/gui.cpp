@@ -112,7 +112,7 @@ bool Gui::ShowKeyboard(std::string header, std::string subHeader, std::string in
 
 void Gui::DrawWindow(PrintConsole *console, int x, int y, int width, int height, std::string title) {
     consoleSelect(console);
-    consoleClear();
+    ClearConsole();
 
     // Top Line
     console->cursorX = 1;
@@ -185,7 +185,7 @@ void Gui::DrawYSeparator(PrintConsole *console, int x, int y, int width) {
 
 void Gui::DrawMenu(PrintConsole *console, std::vector<std::string> options, int selectedIndex, bool enabled) {
     consoleSelect(console);
-    consoleClear();
+    ClearConsole();
     console->cursorX = 1;
     console->cursorY = 1;
     DrawMenuInline(console, options, selectedIndex, enabled);
@@ -217,4 +217,9 @@ void Gui::DrawMenuInline(PrintConsole *console, std::vector<std::string> options
 
 void Gui::DrawMenuInline(PrintConsole *console, std::vector<std::string> options, int selectedIndex) {
     DrawMenuInline(console, options, selectedIndex, true);
+}
+
+void Gui::ClearConsole() {
+    printf("\x1b[3J\x1b[2J\x1b[H");
+    consoleUpdate(NULL);
 }

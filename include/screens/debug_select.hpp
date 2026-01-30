@@ -12,7 +12,7 @@ struct DebugSelectScreen : FsmScreen
 
     void draw() {
         consoleSelect(context->gui->consoles[2]);
-        consoleClear();
+        Gui::ClearConsole();
         printf("Last search: %s\n", context->GetValueString().c_str());
         printf("Found: %zu\n\n", context->memoryDump->Size() / sizeof(u64));
         Gui::DrawMenuInline(context->gui->consoles[2], options, selectedIndex);

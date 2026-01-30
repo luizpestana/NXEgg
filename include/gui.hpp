@@ -35,6 +35,8 @@ public:
 
     static void DrawMenu(PrintConsole *console, std::vector<std::string> options, int selectedIndex);
 
+    static void ClearConsole();
+
     std::vector<PrintConsole *> consoles;
     std::string title;
 };

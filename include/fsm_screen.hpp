@@ -19,7 +19,7 @@ struct FsmScreen : tinyfsm::Fsm<FsmScreen> {
     virtual void react(EvInputAction const &) { };
     virtual void react(EvInputOption const &) { };
     virtual void react(EvInputBack const &) {
-        consoleClear();
+        Gui::ClearConsole();
         transit<MenuScreen>();
     };
     static void start() {

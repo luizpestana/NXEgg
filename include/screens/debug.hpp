@@ -25,7 +25,7 @@ struct DebugScreen : FsmScreen
 
     void entry() override {
         consoleSelect(context->gui->consoles[2]);
-        consoleClear();
+        Gui::ClearConsole();
         search();
     };
 

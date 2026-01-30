@@ -46,7 +46,7 @@ INCLUDES	:=	include
 
 APP_TITLE	:= NXEgg
 APP_AUTHOR	:= MadSkyer
-APP_VERSION := 0.2.0
+APP_VERSION := 0.3.0
 
 #---------------------------------------------------------------------------------
 # options for code generation

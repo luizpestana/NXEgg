@@ -29,7 +29,7 @@ bool AppContext::ShouldClose() {
 
 void AppContext::DrawHeader() {
     consoleSelect(gui->consoles[0]);
-    consoleClear();
+    Gui::ClearConsole();
 
     printf("Title: %s\n", debugger->GetRunningTitleName().c_str());
     printf("Author: %s\n", debugger->GetRunningTitleAuthor().c_str());
@@ -320,7 +320,7 @@ void AppContext::Search(char *str) {
 
 void AppContext::DrawStatus() {
     consoleSelect(gui->consoles[3]);
-    consoleClear();
+    Gui::ClearConsole();
 
     if (debugger->m_searchType >= 0) {
         printf("Type: %s", searchTypes[debugger->m_searchType].c_str());

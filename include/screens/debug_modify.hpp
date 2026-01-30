@@ -20,7 +20,7 @@ struct DebugModifyScreen : FsmScreen
             Gui::DrawMenu(context->gui->consoles[2], options, selectedIndex);
         } else {
             consoleSelect(context->gui->consoles[2]);
-            consoleClear();
+            Gui::ClearConsole();
             printf("Memory dump is empty, please scan first.");
         }
     }

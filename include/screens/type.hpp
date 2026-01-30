@@ -30,7 +30,7 @@ struct TypeScreen : FsmScreen
     };
 
     void react(EvInputAction const &) override {
-        consoleClear();
+        Gui::ClearConsole();
         context->debugger->m_searchType = (searchType_t) selectedIndex;
         context->DrawStatus();
         transit<MenuScreen>();

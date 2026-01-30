@@ -20,7 +20,7 @@ struct FrozenScreen : FsmScreen
             Gui::DrawMenu(context->gui->consoles[2], options, selectedIndex);
         } else {
             consoleSelect(context->gui->consoles[2]);
-            consoleClear();
+            Gui::ClearConsole();
             printf("The frozen list is empty.");
         }
     }
